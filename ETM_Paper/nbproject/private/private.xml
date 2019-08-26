@@ -3,10 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/williamscott/Documents/GitHub/ETM_Paper/src/MyModels/ETM.java</file>
-            <file>file:/Users/williamscott/Documents/GitHub/ETM_Paper/src/MyModels/NeightNode.java</file>
-            <file>file:/Users/williamscott/Documents/GitHub/ETM_Paper/src/MyModels/Neighbor.java</file>
-            <file>file:/Users/williamscott/Documents/GitHub/ETM_Paper/src/MyModels/TermVector.java</file>
+            <file>file:/Users/williamscott/Documents/GitHub/ETM/ETM_Paper/src/MyModels/TermVector.java</file>
+            <file>file:/Users/williamscott/Documents/GitHub/ETM/ETM_Paper/src/MyModels/Neighbor.java</file>
+            <file>file:/Users/williamscott/Documents/GitHub/ETM/ETM_Paper/src/MyModels/NeightNode.java</file>
+            <file>file:/Users/williamscott/Documents/GitHub/ETM/ETM_Paper/src/MyModels/ETM.java</file>
         </group>
     </open-files>
 </project-private>

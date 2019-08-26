@@ -135,7 +135,7 @@ public class ETM {
     ArrayList<NeightNode> sentNeighArr;
     //HashMap<String,Integer> wordIdMap = new HashMap<String,Integer>();
     HashMap<String, float[]> wordMap = new HashMap<String, float[]>();
-    String vectorPath = "C:/Users/jipeng/Desktop/Qiang/Word2Vec/glove.6B.300d.txt";
+    String vectorPath = "./resources/glove.6B.300d.txt";
 
     double textDist[][];
 
@@ -882,7 +882,7 @@ public class ETM {
     	//wordNei = new int[wordDist.length][3];
 
     	//for(int i=0; i<wordNei.)
-        String neiPath = "C:/Users/jipeng/Desktop/TopicModel/dataset/" + dataName + "/wordNeighbors0.4.txt";;
+        String neiPath = "./resources/wordNeighbors0.4.txt";;
         FileWriter fw = new FileWriter(neiPath);
         BufferedWriter bw = new BufferedWriter(fw);
 
@@ -1202,10 +1202,10 @@ public class ETM {
         //int M = sData.size();
         String resPath = "";
         if (times > 0) {
-            resPath = "C:/Users/jipeng/Desktop/TopicModel/dataset/" + dataName + "/TopWords/STTP_topics=" + topics + "topWords=" + topWords + "times=" + times + ".txt";
+            resPath = "./resources/STTP_topics=" + topics + "topWords=" + topWords + "times=" + times + ".txt";
         } // resPath = "C:/Users/jipeng/Desktop/TopicModel/dataset/s20NewsRes/ShortResult/MergeShort_topics=" + topics + "topWords="+topWords+"times="+times+".txt";
         else {
-            resPath = "C:/Users/jipeng/Desktop/TopicModel/dataset/" + dataName + "/TopWords/STTP_topics=" + topics + "topWords=" + topWords + ".txt";
+            resPath = "./resources/STTP_topics=" + topics + "topWords=" + topWords + ".txt";
         }
 
         FileWriter fw = new FileWriter(resPath);
@@ -1346,7 +1346,7 @@ public class ETM {
     }
 
     public void printSis() throws Exception {
-        String sisPath = "C:/Users/jipeng/Desktop/TopicModel/dataset/googlenews/textSis.txt";
+        String sisPath = "./resources/textSis.txt";
     	//readLable("C:/Users/jipeng/Desktop/TopicModel/dataset/s20NewsRes/ShortText/sentenceLabel.txt");
 
         //String nmiPath = "C:/Users/jipeng/Desktop/TopicModel/dataset/s20NewsRes/EmbKmeans_NMI.txt";
@@ -1374,7 +1374,7 @@ public class ETM {
         //testTestDist();
         computDistForTwoText();
 
-        String neiPath = "C:/Users/jipeng/Desktop/TopicModel/dataset/" + dataName + "/wordNeighbors0.4.txt";
+        String neiPath = "./resources/wordNeighbors0.4.txt";
 
         num_neighbors_foreach_word = new int[V];
         //allocate neighbors for each word
@@ -1382,9 +1382,9 @@ public class ETM {
         load_wordid_neighcnt(neiPath);
 
     	//printSis();
-        readLable("C:/Users/jipeng/Desktop/TopicModel/dataset/" + dataName + "/label.txt");
+        readLable("./resources/label.txt");
 
-        String nmiPath = "C:/Users/jipeng/Desktop/TopicModel/dataset/" + dataName + "/NMI/STTP2.txt";
+        String nmiPath = "./resources/STTP2.txt";
     	//readLable("C:/Users/jipeng/Desktop/TopicModel/dataset/s20NewsRes/ShortText/sentenceLabel.txt");
 
         //String nmiPath = "C:/Users/jipeng/Desktop/TopicModel/dataset/s20NewsRes/MergeShort_NMI.txt";
@@ -1432,14 +1432,14 @@ public class ETM {
 
        //String dataName = "Tweet";
         //String dataName = "NIPS";
-        String dataName = "s_googlenews";
+        String dataName = "new";
 
         ETM dmm = new ETM(dataName);
 
         try {
 
-            String path = "C:/Users/jipeng/Desktop/TopicModel/dataset/" + dmm.dataName + "/sentences.txt";
-            String wordPath = "C:/Users/jipeng/Desktop/TopicModel/dataset/" + dmm.dataName + "/word.txt";
+            String path = "./resources/sentences.txt";
+            String wordPath = "./resources/word.txt";
 
             dmm.iterMain(path, wordPath);
         } catch (Exception e) {
