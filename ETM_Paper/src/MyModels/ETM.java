@@ -2,7 +2,6 @@ package MyModels;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -10,137 +9,49 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 
 public class ETM {
 
-    //String dataName = "20News";
-    String dataName = "googlenews";
-    /**
-     * topic assignments for each word.
-     */
-    int z[][];
-
-    /**
-     * cwt[i][j] number of instances of word i (term?) assigned to topic j.
-     */
-    int[][] nw;
-
-    /**
-     * na[i][j] number of words in document i assigned to topic j.
-     */
-    int[][] nd;
-
-    /**
-     * nwsum[j] total number of words assigned to topic j.
-     */
-    int[] nwsum;
-
-    /**
-     * nasum[i] total number of words in document i.
-     */
-    int[] ndsum;
-
-    /**
-     * cumulative statistics of theta
-     */
-    double[][] thetasum;
-
-    /**
-     * size of statistics
-     */
-    int numstats;
-
+    String dataName = "new";
+    int z[][]; //topic assignments for each word.
+    int[][] nw; //cwt[i][j] number of instances of word i (term?) assigned to topic j.
+    int[][] nd; //na[i][j] number of words in document i assigned to topic j.
+    int[] nwsum; //nwsum[j] total number of words assigned to topic j.
+    int[] ndsum; //nasum[i] total number of words in document i.
+    double[][] thetasum; //cumulative statistics of theta
+    int numstats; //size of statistics
     int num_neighbors_foreach_word[];//word - number of neighbors of this word	
     int word_neighbors[][];//word - neighbors of this word
-
-    /**
-     * sampling lag (?)
-     */
-    private static int THIN_INTERVAL = 20;
-
-    /**
-     * burn-in period
-     */
-    private static int BURN_IN = 100;
-
-    /**
-     * sample lag (if -1 only one sample taken)
-     */
-    private static int SAMPLE_LAG;
-
+    private static int THIN_INTERVAL = 20; //sampling lag (?)
+    private static int BURN_IN = 100; //burn-in period
+    private static int SAMPLE_LAG; //sample lag (if -1 only one sample taken)
     private static int dispcol = 0;
-
-    /**
-     * the number of pseudo-documents
-     */
-    int numPse;
-    /**
-     * vocabulary size
-     */
-    int V;
-
-    /**
-     * number of topics
-     */
-    int K;
-
-    /**
-     * Dirichlet parameter (document--topic associations)
-     */
-    double alpha = .1;
-
-    /**
-     * Dirichlet parameter (topic--term associations)
-     */
-    double beta = .1;
-
-    /**
-     * topic assignments for each document.
-     */
-    int ps[];
-
-    /**
-     * number of documents in cluster z.
-     */
-    int m_ps[];
-
-    /**
-     * max iterations
-     */
-    private static int ITERATIONS = 1000;
-
-    ArrayList<Integer> lablesArr = new ArrayList<Integer>();
-    /**
-     * the number of clusters
-     */
-
-    int clustering;
-
+    int numPse; //the number of pseudo-documents
+    int V; //vocabulary size
+    int K; //number of topics
+    double alpha = .1; //Dirichlet parameter (document--topic associations)
+    double beta = .1; //Dirichlet parameter (topic--term associations)
+    int ps[]; //topic assignments for each document.
+    int m_ps[]; //number of documents in cluster z.
+    private static int ITERATIONS = 1000; //max iterations
+    int clustering; //the number of clusters
     double[][] phisum;
 
+    ArrayList<Integer> lablesArr = new ArrayList<Integer>();
     ArrayList<Integer> label;
-    //ArrayList<String> gene ;
     ArrayList<ArrayList<Integer>> sData;
-	//ArrayList<ArrayList<Integer>> sDataNum;
-
     ArrayList<ArrayList<Integer>> pseData;
     ArrayList<ArrayList<Integer>> shortIndArr;
     ArrayList<ArrayList<Integer>> longIndArr;
-
     ArrayList<String> wordsArr = new ArrayList<String>();
-
     ArrayList<NeightNode> sentNeighArr;
-    //HashMap<String,Integer> wordIdMap = new HashMap<String,Integer>();
     HashMap<String, float[]> wordMap = new HashMap<String, float[]>();
     String vectorPath = "./resources/glove.6B.300d.txt";
 
     double textDist[][];
-
     double wordDist[][];
-
     int clu[];
 
     public ETM(String dn) {
@@ -148,7 +59,6 @@ public class ETM {
     }
 
     public void initialState(int K) {
-        //   int i;
 
         int M = pseData.size();
 
@@ -158,7 +68,7 @@ public class ETM {
         nwsum = new int[K];
         ndsum = new int[M];
 
-           // The z_i are are initialised to values in [1,K] to determine the
+        // The z_i are are initialised to values in [1,K] to determine the
         // initial state of the Markov chain.
         z = new int[M][];
 
@@ -247,23 +157,6 @@ public class ETM {
 
         return neiProb;
     }
-
-    /**
-     * Add to the statistics the values of theta and phi for the current state.
-     *//*
-     private void updateParams() {
-     for (int m = 0; m < sData.size(); m++) {
-     for (int k = 0; k < K; k++) {
-     thetasum[m][k] += (nd[m][k] + alpha) / (ndsum[m] + K * alpha);
-     }
-     }
-     for (int k = 0; k < K; k++) {
-     for (int w = 0; w < V; w++) {
-     phisum[k][w] += (nw[w][k] + beta) / (nwsum[k] + V * beta);
-     }
-     }
-     numstats++;
-     }*/
 
     private void gibbs(int K, double alpha, double beta) {
         this.K = K;
@@ -388,20 +281,12 @@ public class ETM {
         for (int i = 0; i < 200; i++) {
 
             for (int m = 0; m < sData.size(); m++) {
-        		//System.out.println("m : " + m);
+                //System.out.println("m : " + m);
                 //int topic = sampleFullConditional(m);
                 int topic = clusterBasedDist(m);
                 ps[m] = topic;
             }
         }
-
-        /* for(int i=0; i<z.length; i++)
-         {
-         //System.out.print( z[i] + " ");
-         //	if((i+1)%20 ==0)
-         //System.out.println();
-         cluster_doc[z[i]][i] = 1;
-         }*/
     }
 
     public void test() {
@@ -474,7 +359,7 @@ public class ETM {
     }
 
     public double computNMI() {
-    	//double res = 0;
+        //double res = 0;
 
         ArrayList<ArrayList<Integer>> textLabel = new ArrayList<ArrayList<Integer>>();
 
@@ -537,12 +422,7 @@ public class ETM {
             comC += (double) clusterLabel.get(j).size() * Math.log((double) clusterLabel.get(j).size() / ps.length);
         }
 
-    	//System.out.println(comRes + " " + comL + " "+ comC);
         comRes /= Math.sqrt(comL * comC);
-        /*for(int i=0; i<clusterLabel.size(); i++)
-         {
-         System.out.println(i + " " +clusterLabel.get(i).toString());
-         }*/
 
         return comRes;
     }
@@ -568,20 +448,12 @@ public class ETM {
 
             br = new BufferedReader(new FileReader(path));
 
- 			//ArrayList<Integer> vArr = new ArrayList<Integer>();
             while ((line = br.readLine()) != null) {
 
                 // use comma as separator
                 String[] num = line.split(cvsSplitBy);
-
- 				//System.out.println(num[0]);
-                //int laberNum = Integer.parseInt(num[0]);
- 				//label.add(laberNum);
-                //wordId.put(Integer.parseInt(num[0]), num[1]);
                 lablesArr.add(Integer.parseInt(num[0]));
             }
- 			//V = wordsArr.size();
-
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -597,6 +469,16 @@ public class ETM {
         }
     }
 
+    public void readLable_() {
+        int c = 0;
+        for (int i = 0; i < 5000; i++) {
+            lablesArr.add(c);
+            if(i == 2500){
+                c += 1;
+            }
+        }
+    }
+
     public void readWord(String path) {
 
         BufferedReader br = null;
@@ -607,16 +489,11 @@ public class ETM {
 
             br = new BufferedReader(new FileReader(path));
 
-			//ArrayList<Integer> vArr = new ArrayList<Integer>();
+            //ArrayList<Integer> vArr = new ArrayList<Integer>();
             while ((line = br.readLine()) != null) {
 
                 // use comma as separator
                 String[] num = line.split(cvsSplitBy);
-
-				//System.out.println(num[0]);
-                //int laberNum = Integer.parseInt(num[0]);
-				//label.add(laberNum);
-                //wordId.put(Integer.parseInt(num[0]), num[1]);
                 wordsArr.add(num[0]);
             }
 
@@ -780,8 +657,6 @@ public class ETM {
             String word = wordsArr.get(i);
 
             if (!wordMap.containsKey(word)) {
-    			//System.out.println(word);
-                //for(int j=0; j<wordDist.length)
                 noInclude++;
                 continue;
             }
@@ -796,9 +671,6 @@ public class ETM {
 
                 float[] wordVect2 = wordMap.get(word2);
                 double dist = (double) (TermVector.computDist(wordVect1, wordVect2));
-        		//float dist = TermVector.computDist(wordVect1,wordVect2);
-                //if(dist<0 || dist>=1)
-                //System.out.println("Wrong" + dist);
                 if (dist > 1) {
                     dist = 1;
                 }
@@ -819,14 +691,8 @@ public class ETM {
         ArrayList<Double> dist = new ArrayList<Double>();
 
         for (int i = 0; i < d1.size(); i++) {
-    		//float [] wordVect1 = wordMap.get(wordsArr.get(d1.get(i)));
-
             for (int j = 0; j < d2.size(); j++) {
-    			//float [] wordVect2 = wordMap.get(wordsArr.get(d2.get(j)));
-
-                //float wordDist = TermVector.computDist(wordVect1,wordVect2);
                 dist.add(wordDist[d1.get(i)][d2.get(j)]);
-
             }
         }
 
@@ -835,18 +701,13 @@ public class ETM {
 
     public double compuDistIndex(int ind1, int ind2) {
         ArrayList<Integer> uniqueText1 = new ArrayList<Integer>();
-
         ArrayList<Double> weightText1 = normBagOfWords(sData.get(ind1), uniqueText1);
-
         ArrayList<Integer> uniqueText2 = new ArrayList<Integer>();
-
         ArrayList<Double> weightText2 = normBagOfWords(sData.get(ind2), uniqueText2);
-
         ArrayList<Double> dist = textWordDist(uniqueText1, uniqueText2);
 
         double twoTextDist = docDist2(weightText1, weightText2, dist);
         return twoTextDist;
-
     }
 
     public void testTestDist() {
@@ -857,8 +718,6 @@ public class ETM {
         System.out.println(compuDistIndex(ind1, ind2));
         System.out.println(compuDistIndex(ind1, ind3));
         System.out.println(compuDistIndex(ind1, ind4));
-    	//ystem.out.println(compuDistIndex(ind2,ind2));
-
     }
 
     public void getMinIndex(double[] array, int cur, BufferedWriter bw) throws Exception {
@@ -875,22 +734,15 @@ public class ETM {
 
         }
         bw.newLine();
-        // retur
     }
 
     public void computWordNei() throws Exception {
-    	//wordNei = new int[wordDist.length][3];
-
-    	//for(int i=0; i<wordNei.)
         String neiPath = "./resources/wordNeighbors0.4.txt";;
         FileWriter fw = new FileWriter(neiPath);
         BufferedWriter bw = new BufferedWriter(fw);
 
         for (int i = 0; i < wordDist.length; i++) {
-            //wordNei[i] = getMinIndex(wordDist[i],3,i);
             getMinIndex(wordDist[i], i, bw);
-    	//	System.out.println(wordsArr.get(i) + " " + wordsArr.get(wordNei[i][0])+ " " + wordsArr.get(wordNei[i][1])
-            //	+ " " + wordsArr.get(wordNei[i][2])+ " " + wordsArr.get(wordNei[i][3])+ " " + wordsArr.get(wordNei[i][4]));
         }
         bw.close();
         fw.close();
@@ -898,7 +750,6 @@ public class ETM {
 
     public void computDistForTwoText() throws Exception {
         computWordDist();
-
         computWordNei();
 
         System.out.println("computDistForTwoText");
@@ -909,38 +760,16 @@ public class ETM {
             ArrayList<Integer> uniqueText1 = new ArrayList<Integer>();
 
             ArrayList<Double> weightText1 = normBagOfWords(sData.get(i), uniqueText1);
-    		//boolean flag = false;
-            //int cur = -1;
             for (int j = i + 1; j < sData.size(); j++) {
-                /*if((j%2)==0)
-                 {
-                 cur = j;
-                 flag = true;
-    				
-                 j = sData.size()-j;
-    				
-                 System.out.println("reverse:" + j);
-                 }
-                 else
-                 System.out.println("right:" + j);*/
                 ArrayList<Integer> uniqueText2 = new ArrayList<Integer>();
-
                 ArrayList<Double> weightText2 = normBagOfWords(sData.get(j), uniqueText2);
-
                 ArrayList<Double> dist = textWordDist(uniqueText1, uniqueText2);
 
                 double twoTextDist = docDist2(weightText1, weightText2, dist);
                 textDist[i][j] = twoTextDist;
                 textDist[j][i] = twoTextDist;
-        		//System.out.println(twoTextDist);
-        		/*if(flag)
-                 {
-                 flag = false;
-                 j = cur;
-                 }*/
             }
         }
-
     }
 
     public double[][] getPhi() {
@@ -982,13 +811,9 @@ public class ETM {
     }
 
     public void getCluster() {
-    	//clu = new int[sData.size()];
-
         for (int m = 0; m < pseData.size(); m++) {
             ArrayList<Integer> shortInd = shortIndArr.get(m);
             ArrayList<Integer> longInd = longIndArr.get(m);
-
-    		//ArrayList<Integer> pseD = pseData.get(m);
             int preInd = 0;
 
             for (int i = 0; i < shortInd.size(); i++) {
@@ -1026,13 +851,10 @@ public class ETM {
     }
 
     public void getCluster3() {
-        //clu = new int[sData.size()];
         double theta[][] = getTheta();
 
         for (int m = 0; m < theta.length; m++) {
             ArrayList<Integer> shortInd = shortIndArr.get(m);
-    		//ArrayList<Integer> longInd = longIndArr.get(m);
-
             int maxK = maxIndexArr(theta[m]);
 
             for (int i = 0; i < shortInd.size(); i++) {
@@ -1043,7 +865,6 @@ public class ETM {
     }
 
     public void getClusterDMM() {
-        //clu = new int[sData.size()];
         for (int i = 0; i < ps.length; i++) {
             ps[i] = -1;
         }
@@ -1063,7 +884,6 @@ public class ETM {
 
                 int m_k[] = new int[K];
                 for (int k = 0; k < K; k++) {
-                    //System.out.println("K: " + k);
                     double wordsS = 1;
                     int begin = preInd;
                     for (; begin < longInd.get(i); begin++) {
@@ -1075,8 +895,6 @@ public class ETM {
                     for (int j = 1; j <= len; j++) {
                         wordsT *= (nwsum[k] + V * beta);
                     }
-
-                    //p[k] = (nd[m][k] + alpha)* wordsS  / (wordsT);
                     p[k] = wordsS / wordsT;
                 }
 
@@ -1084,12 +902,9 @@ public class ETM {
                 for (int k = 1; k < p.length; k++) {
                     p[k] += p[k - 1];
                 }
-    		            //System.out.println(p[k]);
                 // scaled sample because of unnormalised p[]
 
                 double u = Math.random() * p[K - 1];
-    		       // System.out.println("u: " + u);
-                // System.out.println("p : " + p[p.length-1]);
                 for (topic = 0; topic < p.length; topic++) {
                     if (u < p[topic]) {
                         break;
@@ -1118,7 +933,6 @@ public class ETM {
     }
 
     public void getCluster2() {
-    	//clu = new int[sData.size()];
 
         double phi[][] = getPhi();
 
@@ -1136,11 +950,8 @@ public class ETM {
             int preInd = 0;
 
             for (int i = 0; i < shortInd.size(); i++) {
-                //int len = longInd.get(i)-preInd;
                 double[] p = new double[K];
                 for (int k = 0; k < K; k++) {
-    		        	//System.out.println("K: " + k);
-                    //double wordsS = 1;
                     int begin = preInd;
                     for (; begin < longInd.get(i); begin++) {
                         p[k] *= phi[k][pseD.get(begin)];//(nw[][k] + beta);
@@ -1151,12 +962,9 @@ public class ETM {
                 for (int k = 1; k < p.length; k++) {
                     p[k] += p[k - 1];
                 }
-    		            //System.out.println(p[k]);
                 // scaled sample because of unnormalised p[]
 
                 double u = Math.random() * p[K - 1];
-    		       // System.out.println("u: " + u);
-                // System.out.println("p : " + p[p.length-1]);
                 for (topic = 0; topic < p.length; topic++) {
                     if (u < p[topic]) {
                         break;
@@ -1199,12 +1007,10 @@ public class ETM {
 
         int K = topics;
 
-        //int M = sData.size();
         String resPath = "";
         if (times > 0) {
             resPath = "./resources/STTP_topics=" + topics + "topWords=" + topWords + "times=" + times + ".txt";
-        } // resPath = "C:/Users/jipeng/Desktop/TopicModel/dataset/s20NewsRes/ShortResult/MergeShort_topics=" + topics + "topWords="+topWords+"times="+times+".txt";
-        else {
+        } else {
             resPath = "./resources/STTP_topics=" + topics + "topWords=" + topWords + ".txt";
         }
 
@@ -1224,12 +1030,10 @@ public class ETM {
         double[][] phi = getPhi();
 
         for (int i = 0; i < phi.length; i++) {
-       	 //  ArrayList<String> wArr = new ArrayList<String>();
 
             int[] maxIndices = getMaxIndex(phi[i], topWords);
 
             for (int j = 0; j < maxIndices.length; j++) {
-                // wArr.add(wordId.get(maxIndices[j]));
                 int ind = maxIndices[j];
                 bw.write(wordsArr.get(ind));
                 bw.write(" ");
@@ -1237,7 +1041,6 @@ public class ETM {
             bw.newLine();
             bw.newLine();
         }
-        // bw.write(res);
         bw.close();
         fw.close();
         return nmi;
@@ -1252,7 +1055,6 @@ public class ETM {
 
             br = new BufferedReader(new FileReader(neiPath));
 
-				//ArrayList<Integer> vArr = new ArrayList<Integer>();
             int wordInd = 0;
             while ((line = br.readLine()) != null) {
                 String[] num = line.split(cvsSplitBy);
@@ -1327,11 +1129,7 @@ public class ETM {
                     shortArr.add(j);
                     for (int w = 0; w < sData.get(j).size(); w++) {
                         int wInd = sData.get(j).get(w);
-        				//int wNum = sDataNum.get(j).get(w);
-
-                        //for(int n=0; n<wNum; n++)
                         pseText.add(wInd);
-
                     }
                     longPse += sData.get(j).size();
                     longArr.add(longPse);
@@ -1347,9 +1145,6 @@ public class ETM {
 
     public void printSis() throws Exception {
         String sisPath = "./resources/textSis.txt";
-    	//readLable("C:/Users/jipeng/Desktop/TopicModel/dataset/s20NewsRes/ShortText/sentenceLabel.txt");
-
-        //String nmiPath = "C:/Users/jipeng/Desktop/TopicModel/dataset/s20NewsRes/EmbKmeans_NMI.txt";
         FileWriter fw = new FileWriter(sisPath);
         BufferedWriter bw = new BufferedWriter(fw);
 
@@ -1380,21 +1175,12 @@ public class ETM {
         //allocate neighbors for each word
         word_neighbors = new int[V][];
         load_wordid_neighcnt(neiPath);
-
-    	//printSis();
-        readLable("./resources/label.txt");
-
+        readLable_();
+//        readLable("./resources/label.txt");
         String nmiPath = "./resources/STTP2.txt";
-    	//readLable("C:/Users/jipeng/Desktop/TopicModel/dataset/s20NewsRes/ShortText/sentenceLabel.txt");
-
-        //String nmiPath = "C:/Users/jipeng/Desktop/TopicModel/dataset/s20NewsRes/MergeShort_NMI.txt";
         FileWriter fw = new FileWriter(nmiPath);
         BufferedWriter bw = new BufferedWriter(fw);
-
         System.out.println("ETM using Gibbs Sampling.");
-
-        // LdaGibbsSampler lda = new LdaGibbsSampler(documents, V);
-        // configure(1000, 500, 100, 5);
         int pseDocNum = sData.size() / 50;
         kmeans(pseDocNum);
 
@@ -1411,10 +1197,7 @@ public class ETM {
         {
             for (int k = topics; k <= 10; k = k + 20) {
                 for (int topWords = 10; topWords <= 10; topWords = topWords + 20) {
-
                     nmi = mainFun(times, k, topWords);
-
-                    // double nmi = computNMI();
                     System.out.println(nmi);
                     bw.write(String.valueOf(nmi) + " ");
                     bw.newLine();
@@ -1424,20 +1207,13 @@ public class ETM {
 
         bw.close();
         fw.close();
-        //}
     }
 
     public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-       //String dataName = "Tweet";
-        //String dataName = "NIPS";
         String dataName = "new";
-
         ETM dmm = new ETM(dataName);
 
         try {
-
             String path = "./resources/sentences.txt";
             String wordPath = "./resources/word.txt";
 
@@ -1445,7 +1221,5 @@ public class ETM {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
-
 }
